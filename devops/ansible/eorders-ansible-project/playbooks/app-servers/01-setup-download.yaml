@@ -1,0 +1,20 @@
+# 01-setup.yaml
+---
+  - hosts: app_event_servers_kafka
+    vars:
+      var_event_servers_install: true
+    tasks:
+      - name: Setup Download - Include App Servers Role
+        include_role:
+          name: app-servers
+   
+  
+  - hosts: app_event_servers_neo4j
+    vars:
+      var_neo4j_servers_install: true
+    tasks:
+      - name: Setup Download - Include App Servers Role
+        include_role:
+          name: app-servers
+    
+   

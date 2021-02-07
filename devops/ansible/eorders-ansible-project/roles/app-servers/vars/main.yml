@@ -1,0 +1,5 @@
+---
+# vars file for app-servers
+kafka_brokers_count: 3
+var_event_servers_install: false
+var_neo4j_servers_install: false
