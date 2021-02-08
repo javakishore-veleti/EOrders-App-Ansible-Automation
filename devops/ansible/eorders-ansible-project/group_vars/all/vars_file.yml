@@ -1,0 +1,5 @@
+var_event_servers_download: false
+var_event_servers_download_kafka: false
+
+var_event_servers_install: false
+var_event_servers_install_kafka: false

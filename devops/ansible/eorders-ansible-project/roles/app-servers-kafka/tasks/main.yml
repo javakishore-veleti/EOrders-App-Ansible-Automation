@@ -1,0 +1,29 @@
+---
+# tasks file for app-servers-kafka
+- name: Kafka Download Docker Image
+  shell: docker pull {{ kafka_docker_image }}:{{ kafka_docker_image_tag }}
+  when:
+    - var_event_servers_kafka_download
+  tags:
+    - kafka_download
+
+- name: Kafka Docker Container Run - Checking Docker container by name {{ kafka_docker_image_prefix }} already exists
+  shell: docker ps -a -f name={{ kafka_docker_image_prefix }} | grep -c {{ kafka_docker_image_prefix }} 
+  tags:
+    - kafka_run
+  register: kafka_docker_container_count
+  when:
+    - var_event_servers_kafka_run
+  failed_when: "kafka_docker_container_count.rc not in [ 0, 1 ]"
+- debug: msg="{{kafka_docker_container_count}}"
+
+
+- name: Kafka Docker Container Run
+  shell: docker run -p 9092:9092 -e  --name {{ kafka_docker_image_prefix }} {{ kafka_docker_image }}:{{ kafka_docker_image_tag }}
+  tags:
+    - kafka_run
+  when:
+    - var_event_servers_kafka_run
+    - kafka_docker_container_count.stdout in [ "0", 0 ]
+
+

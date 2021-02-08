@@ -1,8 +1,0 @@
----
-# tasks file for app-servers
-- include: event_servers/kafka-install.yaml
-  when: var_event_servers_install | bool
-  tags:
-    - kafka_install
-    - event_servers_install
-

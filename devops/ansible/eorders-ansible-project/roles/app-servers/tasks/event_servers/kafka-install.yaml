@@ -1,3 +1,0 @@
----
-- name: "Kafka Install Docker Images Download"
-  shell: docker pull confluentinc/cp-kafka:5.5.3-3-ubi8

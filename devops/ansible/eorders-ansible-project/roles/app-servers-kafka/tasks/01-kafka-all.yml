@@ -1,0 +1,11 @@
+---
+- name: Kafka Download Docker Image
+  shell: docker pull {{ kafka_docker_image }}:{{ kafka_docker_image_tag }}
+  when:
+    - var_event_servers_kafka_download
+
+- name: Kafka Docker Container Run
+  shell: docker -name {{ kafka_docker_image_prefix }}-{{ ansible_date_time }} run {{ kafka_docker_image }}:{{ kafka_docker_image_tag }}
+  when:
+    - var_event_servers_kafka_run
+

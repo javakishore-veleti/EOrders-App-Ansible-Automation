@@ -1,0 +1,10 @@
+---
+# defaults file for app-servers-kafka
+kafka_broker_count: 3
+kafka_docker_image_prefix: eorders_kafka
+kafka_docker_container_prefix: eorders_kafka
+kafka_docker_image: confluentinc/cp-kafka
+kafka_docker_image_tag: 5.5.3-3-ubi8
+
+var_event_servers_kafka_download: false
+var_event_servers_kafka_run: false
