@@ -1,29 +1,41 @@
 ---
 # tasks file for app-servers-kafka
-- name: Kafka Download Docker Image
+- name: Kafka Setup - Kafka Download Docker Image
   shell: docker pull {{ kafka_docker_image }}:{{ kafka_docker_image_tag }}
+  register: kafka_docker_image_pull_output
   when:
     - var_event_servers_kafka_download
   tags:
     - kafka_download
+  changed_when: "'Downloaded newer image for' in kafka_docker_image_pull_output.stdout"  
 
-- name: Kafka Docker Container Run - Checking Docker container by name {{ kafka_docker_image_prefix }} already exists
+- name: Kafka Setup (or Kafka Shutdown ) - Kafka Docker Container Run - Checking Docker container by name {{ kafka_docker_image_prefix }} already exists
   shell: docker ps -a -f name={{ kafka_docker_image_prefix }} | grep -c {{ kafka_docker_image_prefix }} 
   tags:
     - kafka_run
   register: kafka_docker_container_count
   when:
-    - var_event_servers_kafka_run
+    - var_event_servers_kafka_run or var_event_servers_kafka_shutdown
   failed_when: "kafka_docker_container_count.rc not in [ 0, 1 ]"
+  # changed_when: kafka_docker_container_count.stdout in [ "0", 0 ]
+  changed_when: "'0' in kafka_docker_container_count.stdout"  
 - debug: msg="{{kafka_docker_container_count}}"
 
 
-- name: Kafka Docker Container Run
-  shell: docker run -p 9092:9092 -e  --name {{ kafka_docker_image_prefix }} {{ kafka_docker_image }}:{{ kafka_docker_image_tag }}
+- name: Kafka Setup - kafka Docker Container Run - Starting Kafka Docker Container through docker-compose
+  shell: docker-compose -f ../../roles/app-servers-kafka/files/kafka-docker-compose.yaml up -d 
   tags:
     - kafka_run
+  changed_when: "'0' in kafka_docker_container_count.stdout"  
   when:
     - var_event_servers_kafka_run
     - kafka_docker_container_count.stdout in [ "0", 0 ]
 
+- name: Kafka Shutdown - Kafka Docker Compose Container Shutdown
+  shell: docker-compose -f ../../roles/app-servers-kafka/files/kafka-docker-compose.yaml down  
+  tags:
+    - kafka_shutdown
+  when:
+    - var_event_servers_kafka_shutdown
+    - kafka_docker_container_count.stdout in [ "1", 1 ]
 

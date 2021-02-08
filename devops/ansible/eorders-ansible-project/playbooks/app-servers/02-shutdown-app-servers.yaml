@@ -1,0 +1,12 @@
+# 01-setup.yaml
+---
+  - hosts: app_event_servers_kafka
+    gather_facts: no
+    vars:
+      var_event_servers_kafka_shutdown: true
+    tasks:
+      - name: Kafka Server Shutdown
+        include_role:
+          name: app-servers-kafka
+   
+   
